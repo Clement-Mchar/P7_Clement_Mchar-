@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const authCheck = require("../middlewares/auth");
+const auth = require("../middlewares/auth");
 
 const postCtrl = require("../controllers/post.controller");
 
-router.get('/', postCtrl.readPost);
-router.post('/', postCtrl.createPost);
-router.put('/:uuid', postCtrl.updatePost);
-router.delete('/:uuid', postCtrl.deletePost);
-router.patch('/like-post/:uuid', postCtrl.likePost)
-router.patch('/unlike-post/:uuid', postCtrl.unlikePost)
+router.get('/', auth, postCtrl.readPost);
+router.post('/', auth, postCtrl.createPost);
+router.put('/:id', auth, postCtrl.updatePost);
+router.delete('/:id', auth, postCtrl.deletePost);
+router.patch('/like-post/:id', auth, postCtrl.likePost)
+router.patch('/unlike-post/:id', auth, postCtrl.unlikePost)
 
 module.exports = router;
