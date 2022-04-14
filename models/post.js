@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes, Sequelize) => {
 	class post extends Model {
 		/**
 		 * Helper method for defining associations.
@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate({ user, comment, like }) {
+			this.hasMany(like, { foreignKey: "postId" });
 			this.belongsTo(user, { foreignKey: "userId" });
-			this.hasMany(Like, { foreignKey: "postId" });
 
 			//this.hasMany(comment, { foreignKey: "commenterId" });
 		}
@@ -19,21 +19,22 @@ module.exports = (sequelize, DataTypes) => {
 				...this.get(),
 				id: undefined,
 				userId: undefined,
-				uuid: undefined,
 			};
 		}
 	}
-	Post.init(
+	post.init(
 		{
-			uuid: {
+			id: {
 				type: DataTypes.UUID,
 				defaultValue: DataTypes.UUIDV4,
+				primaryKey: true,
 			},
 			userId: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.UUID,
 				allowNull: false,
+
 			},
-			body: {
+			message: {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
@@ -43,15 +44,11 @@ module.exports = (sequelize, DataTypes) => {
 			video: {
 				type: DataTypes.STRING,
 			},
-			likers: {
-				type: DataTypes.INTEGER,
-				required: true,
-			},
 		},
 
 		{
 			sequelize,
-			tableName: "post",
+
 			modelName: "post",
 		}
 	);
