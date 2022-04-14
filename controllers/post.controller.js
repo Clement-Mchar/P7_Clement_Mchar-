@@ -73,18 +73,21 @@ module.exports.likePost = async (req, res, next) => {
 			where: { id },
 			include: [{ model: like, attributes: ["postId", "userId"] }],
 		});
-		const userLiked = await user.findOne({ where: { id: req.auth.userId } });
-		await like.findOne({ where: { userId: userLiked.id } });
 
-		await like.create({
-			postId: likedPost.id,
-			userId: userLiked.id,
+		const alreadyLiked = await like.findOne({
+			where: { userId: req.auth.userId },
 		});
+		if (!alreadyLiked) {
+			await like.create({
+				postId: likedPost.id,
+				userId: req.auth.userId,
+			});
+		}
 
 		await likedPost.save(likedPost);
 		return res.json({ likedPost });
 	} catch (err) {
-		console.log(err);
+		console.error();
 		return res.status(500).json({ error: "Something went wrong" });
 	}
 };
@@ -96,13 +99,16 @@ module.exports.unlikePost = async (req, res) => {
 			where: { id },
 			include: [{ model: like, attributes: ["postId", "userId"] }],
 		});
-		
-		const Like = await like.findOne({
-			where: { postId: likedPost.id, userId: req.auth.userId },
+
+		const stillLiked = await like.findOne({
+			where: { userId: req.auth.userId },
 		});
-			await Like.destroy();
-			await likedPost.save(likedPost);
-			return res.json({ likedPost });
+		if (stillLiked) {
+			await stillLiked.destroy();
+		}
+
+		await likedPost.save(likedPost);
+		return res.json({ likedPost });
 	} catch (err) {
 		console.log(err);
 		return res.status(500).json({ error: "Something went wrong" });
