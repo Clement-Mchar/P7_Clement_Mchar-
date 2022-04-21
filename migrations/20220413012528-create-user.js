@@ -1,19 +1,28 @@
-'use strict';
+"use strict";
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
-      id: {
+	async up(queryInterface, Sequelize) {
+		await queryInterface.createTable("users", {
+			id: {
 				type: Sequelize.UUID,
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true,
-			  },
-			name: {
-				type: Sequelize.STRING,
+			},
+			firstName: {
+				type: DataTypes.STRING,
 				allowNull: false,
 				validate: {
-					notNull: { msg: "User must have a name" },
+					notNull: { msg: "User must have a first name" },
 					notEmpty: { msg: "name must not be empty" },
-					len: [5, 50],
+					len: [2, 50],
+				},
+			},
+			lastName: {
+				type: DataTypes.STRING,
+				allowNull: false,
+				validate: {
+					notNull: { msg: "User must have a last name" },
+					notEmpty: { msg: "name must not be empty" },
+					len: [2, 50],
 				},
 			},
 			email: {
@@ -34,7 +43,7 @@ module.exports = {
 				validate: {
 					notNull: { msg: "User must have a password" },
 					notEmpty: { msg: "Password must not be empty" },
-					len: [0, 1024]
+					len: [0, 1024],
 				},
 			},
 			picture: {
@@ -47,17 +56,17 @@ module.exports = {
 					len: [0, 1024],
 				},
 			},
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
-  }
+			createdAt: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
+			updatedAt: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
+		});
+	},
+	async down(queryInterface, Sequelize) {
+		await queryInterface.dropTable("users");
+	},
 };

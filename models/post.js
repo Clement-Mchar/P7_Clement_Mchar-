@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 		static associate({ user, comment, like }) {
 			this.hasMany(like, { foreignKey: "postId" });
 			this.belongsTo(user, { foreignKey: "userId" });
+			this.hasMany(comment, { foreignKey: "postId" });
 
 			//this.hasMany(comment, { foreignKey: "commenterId" });
 		}
@@ -38,6 +39,24 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
+			firstName: {
+				type: DataTypes.STRING,
+				allowNull: false,
+				validate: {
+				  notNull: { msg: "User must have a first name" },
+				  notEmpty: { msg: "name must not be empty" },
+				  len: [2, 50],
+				},
+			  },
+			  lastName: {
+				type: DataTypes.STRING,
+				allowNull: false,
+				validate: {
+				  notNull: { msg: "User must have a last name" },
+				  notEmpty: { msg: "name must not be empty" },
+				  len: [2, 50],
+				},
+			  },
 			picture: {
 				type: DataTypes.STRING,
 			},
