@@ -1,12 +1,15 @@
-const { sequelize, user, post, like } = require("../models");
+const { user, post, like, comment } = require("../models");
 
 module.exports.readPost = async (req, res) => {
 	try {
 		const posts = await post.findAll(
 			{
-				include: [{ model: user, attributes: ["name", "picture"] }],
+				include: [
+					{ model: user, attributes: ["firstName", "lastName", "picture"] },
+					{ model: like, attributes: ["postId"]},
+					{ model: comment, attributes: ["firstName", "lastName", "message"] }
+				],
 			},
-			{ include: [{ model: like, attributes: ["postId", "userId"] }] }
 		);
 		return res.json(posts);
 	} catch (err) {
@@ -21,6 +24,8 @@ module.exports.createPost = async (req, res) => {
 		const userPost = await user.findOne({ where: { id: req.auth.userId } });
 
 		const posts = await post.create({
+			firstName: userPost.firstName,
+			lastName: userPost.lastName,
 			message,
 			userId: userPost.id,
 			picture,
@@ -28,7 +33,7 @@ module.exports.createPost = async (req, res) => {
 		});
 		return res.json(posts);
 	} catch (err) {
-		console.log(err);
+		console.error();
 		return res.status(500).json(err);
 	}
 };

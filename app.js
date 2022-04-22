@@ -1,6 +1,7 @@
 const express = require("express");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
+const commentRoutes = require("./routes/comment.routes");
 const { authCheck } = require("./middlewares/auth");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -35,7 +36,9 @@ app.use((req, res, next) => {
 app.get(bodyParser.json);
 //app.get("*", authCheck);
 
-app.use("/api/users", userRoutes);
-app.use("/api/posts", postRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
+app.use("/api/comments", commentRoutes);
+
 
 module.exports = app;

@@ -1,4 +1,4 @@
-const {  user, Post} = require ('../models');
+const {  user, post} = require ('../models');
 
 
 module.exports.getAllUsers = async (req, res) => {
@@ -6,11 +6,12 @@ module.exports.getAllUsers = async (req, res) => {
 	res.status(200).json(users);
 };
 
-module.exports.userInfo = async (req, res) => {
+module.exports.getUser = async (req, res) => {
 	const id = req.params.id;
 	try {
 		const users = await user.findOne({
 			where: { id },
+			include: [{ model: post, attributes: ["firstName", "lastName", "message"] }]
 		});
 		return res.json(users);
 	} catch (err) {
@@ -26,7 +27,7 @@ module.exports.updateUser = async (req, res) => {
 			where: { id },
 		});
 		users.bio = req.body.bio;
-
+		users.picture = req.body.picture;
 		await users.save();
 		return res.json({ users });
 	} catch (err) {

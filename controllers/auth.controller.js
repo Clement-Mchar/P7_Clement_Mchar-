@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
-const { sequelize, user, post } = require("../models");
-const authCheck = require("../middlewares/auth");
+const { user } = require("../models");
 const jwt = require("jsonwebtoken");
 
 exports.signUp = (req, res) => {
@@ -9,7 +8,8 @@ exports.signUp = (req, res) => {
 			.hash(req.body.password, 10)
 			.then((hash) => {
 				const User = new user({
-					name: req.body.name,
+					firstName: req.body.firstName,
+					lastName: req.body.lastName,
 					email: req.body.email,
 					password: hash,
 				});
