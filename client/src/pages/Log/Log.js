@@ -1,6 +1,7 @@
 import React from "react";
 import "../../styles/pages/log.scss";
-
+import SignIn from "./signIn";
+import SignUp from "./signUp";
 const Log = () => {
 	return (
 		<div className="connexion-page">
@@ -8,12 +9,13 @@ const Log = () => {
 				<div className="connexion-logo">
 					<img src="./img/icon.png" alt="logo groupomania" />
 				</div>
-				<div className="sign-in-container"></div>
+				<SignIn />
 			</div>
 			<div className="page-wrapper">
 				<div className="img-wrapper">
 					<img src="./img/groupomania-connexion.png" alt="groupomania-name" />
 				</div>
+				<SignUp />
 			</div>
 		</div>
 	);

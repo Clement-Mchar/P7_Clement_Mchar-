@@ -1,0 +1,89 @@
+.signup {
+	width: 50%;
+	font-family: Roboto, sans-serif;
+
+	.signup-wrapper {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		.create-acc {
+			color: #dc4734;
+			font-size: 30px;
+			font-weight: 800;
+			padding-bottom: 12px;
+		}
+		.signup-form {
+			box-shadow: 0px 3px 20px 0px rgba($color: #0d0d0d, $alpha: 0.2);
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			width: 80%;
+			.signup-fields {
+				padding: 10px 100px 50px;
+				padding-bottom: 0px;
+	
+				.single-field {
+					width: 100%;
+					border: none;
+                    font-family: Roboto, sans-serif;
+					background-color: transparent;
+					border-bottom: 1px solid #ddd;
+					padding: 5px 10px;
+					padding-top: 10px;
+					color: rgb(95, 95, 95);
+					:focus-visible {
+						outline-width: 0px;
+					}
+					input {
+						max-width: 100%;
+						line-height: normal;
+					}
+					input::placeholder {
+						color: #fff;
+					}
+					input:focus {
+						outline: none;
+					}
+				}
+
+				.submit-btn {
+                    font-family: Roboto, sans-serif;
+					font-size: 18px;
+					font-weight: 500;
+					color: #fff;
+					line-height: 1;
+					padding: 15px 20px;
+					display: block;
+					border: 1px solid transparent;
+					background-color: #dc4734;
+					width: 100%;
+					margin-top: 23px;
+				}
+			}
+		}
+		.title {
+			color: #fff;
+			font-size: 18px;
+			background-color: #dc4734;
+			padding: 23px 0;
+			margin: 0px;
+		}
+		h6 {
+			font-size: 16px;
+			padding-top: 5px;
+			color: #333333;
+            font-family: Roboto, sans-serif;
+			button{
+				border: 0px;
+				background-color: transparent;
+				color: #dc4734;
+				font-family: Roboto;
+				font-size: 16px;
+				font-weight: bold;
+				padding: 0px;
+			}
+		}
+	}
+}
