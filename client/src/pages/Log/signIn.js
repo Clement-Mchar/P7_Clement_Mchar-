@@ -59,6 +59,11 @@ const SignIn = () => {
 						/>
 						<div className="password-error"></div>
 					</div>
+					<div className="form confirm">
+						<label htmlFor="password">Confirmez le Mot de passe: </label>
+						<input type="password" className="single-field" />
+					</div>
+			
 						<input type="submit" 
 						value="Se connecter" className="login-btn" />
 				

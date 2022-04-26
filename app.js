@@ -36,8 +36,7 @@ app.use((req, res, next) => {
 });
 app.get(bodyParser.json);
 //app.get("*", authCheck);
-app.use("/profil", express.static(path.join(__dirname, "client", "public", "uploads", "profil")));
-app.use("/post", express.static(path.join(__dirname, "client", "public", "uploads", "post")));
+
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comments", commentRoutes);
