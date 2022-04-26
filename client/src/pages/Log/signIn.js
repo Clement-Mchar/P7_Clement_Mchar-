@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../../styles/components/signIn.scss";
+import "./signIn.scss";
 
 const SignIn = () => {
 	const [email, setEmail] = useState("");
@@ -35,8 +35,8 @@ const SignIn = () => {
 			});
 	};
 	return (
-		<div className="login">
-			<div className="login-area">
+		<div className="login flex">
+			<div className="login-area flex">
 				<form action="" onSubmit={handleLogin} className="form-field">
 					<div className="form email">
 						<label htmlFor="email">Email :</label>

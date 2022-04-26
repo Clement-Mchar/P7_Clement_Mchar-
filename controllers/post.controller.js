@@ -5,7 +5,7 @@ module.exports.readPost = async (req, res) => {
 		const posts = await post.findAll(
 			{
 				include: [
-					{ model: user, attributes: ["firstName", "lastName", "picture"] },
+					{ model: user, attributes: ["firstName", "lastName", "profilPicture"] },
 					{ model: like, attributes: ["postId"]},
 					{ model: comment, attributes: ["firstName", "lastName", "message"] }
 				],

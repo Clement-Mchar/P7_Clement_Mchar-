@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../../styles/components/signUp.scss";
+import "./signUp.scss";
 
 const SignUp = () => {
 	const [ firstName, setFirstName ] = useState("");
@@ -63,9 +63,9 @@ const SignUp = () => {
 	};
 	return (
 		<div className="signup">
-			<div className="signup-wrapper">
+			<div className="signup-wrapper flex">
 				<h1 className="create-acc">Créer un compte</h1>
-				<div className="signup-form">
+				<div className="signup-form flex">
 					<h3 className="title">Bienvenue sur le workplace Groupomania !</h3>
 					<form action="" onSubmit={handleRegister} className="signup-fields">
 						

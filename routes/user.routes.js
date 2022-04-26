@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authCtrl = require("../controllers/auth.controller");
-const multer = require("../middlewares/multer.profile");
+const multer = require("../middlewares/multer.profil");
 const userCtrl = require("../controllers/user.controller");
 const ErrorHandler = (err, req, res, next) => {
 	if (err) {
