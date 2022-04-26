@@ -19,7 +19,7 @@ module.exports.readPost = async (req, res) => {
 };
 
 module.exports.createPost = async (req, res) => {
-	const { message, picture, video } = req.body;
+	const { message, video } = req.body;
 	try {
 		const userPost = await user.findOne({ where: { id: req.auth.userId } });
 
@@ -28,7 +28,9 @@ module.exports.createPost = async (req, res) => {
 			lastName: userPost.lastName,
 			message,
 			userId: userPost.id,
-			picture,
+			picture: `${req.protocol}://${req.get("host")}/post/${
+				req.file.filename
+			}`,
 			video,
 		});
 		return res.json(posts);

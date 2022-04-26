@@ -46,7 +46,7 @@ module.exports = {
 					len: [0, 1024],
 				},
 			},
-			picture: {
+			profilPicture: {
 				type: Sequelize.STRING,
 				defaultValue: "../uploads/profil/random-User.png",
 			},
