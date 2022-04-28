@@ -1,46 +1,54 @@
 const express = require("express");
+
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.routes");
-const { authCheck } = require("./middlewares/auth");
 const path = require("path");
-const bodyParser = require("body-parser");
 
+const cors = require("cors");
+const { checkUser, requireAuth } = require("./middlewares/auth");
 const { sequelize } = require("./models");
 
-
-async function main(){
-	await sequelize.sync({alter: true})
-
+async function main() {
+	await sequelize.sync({ alter: true });
 }
-main()
+main();
 
-require("dotenv").config();
+require("dotenv").config({ path: path.resolve(__dirname, "./config/.env") });
 
 const app = express();
 app.use(express.json());
 
-app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.setHeader(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-	);
-	res.setHeader(
-		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, DELETE, PATCH, OPTIONS"
-	);
-	
-	res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-	next();
-});
+const corsOptions = {
+	origin: process.env.CLIENT_URL,
+	credentials: true,
+	allowedHeaders: ["sessionId", "Content-Type"],
+	exposedHeaders: ["sessionId"],
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	preflightContinue: false,
+};
+app.use(cors(corsOptions));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.get(bodyParser.json);
-//app.get("*", authCheck);
-app.use("/profil", express.static(path.join(__dirname, "client", "public", "uploads", "profil")));
-app.use("/post", express.static(path.join(__dirname, "client", "public", "uploads", "post")));
+
+app.use(cookieParser());
+
+app.get(`*` , checkUser);
+app.get("/jwtid", requireAuth, (req, res) => {
+	res.status(200).send(res.locals.user.id);
+});
+app.use(
+	"/profil",
+	express.static(path.join(__dirname, "client", "public", "uploads", "profil"))
+);
+app.use(
+	"/post",
+	express.static(path.join(__dirname, "client", "public", "uploads", "post"))
+);
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comments", commentRoutes);
-
 
 module.exports = app;

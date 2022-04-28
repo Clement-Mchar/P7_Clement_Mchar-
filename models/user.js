@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
 				validate: {
 					notNull: { msg: "User must have a password" },
 					notEmpty: { msg: "Password must not be empty" },
-					len: [0, 1024],
+					len: [6, 1024],
 				},
 			},
 			profilPicture: {

@@ -2,7 +2,6 @@
   "name": "p7_clement_mchar",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "nodemon server"
   },
@@ -13,6 +12,7 @@
     "basic-auth": "^2.0.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
