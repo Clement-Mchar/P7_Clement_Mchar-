@@ -35,10 +35,14 @@ app.get(bodyParser.json);
 
 app.use(cookieParser());
 
-app.get(`*` , checkUser);
+app.get(`${process.env.CLIENT_URL}`, checkUser);
+
+
 app.get("/jwtid", requireAuth, (req, res) => {
-	res.status(200).send(res.locals.user.id);
+	res.status(200).send(res.locals.user)
 });
+
+
 app.use(
 	"/profil",
 	express.static(path.join(__dirname, "client", "public", "uploads", "profil"))
@@ -47,6 +51,7 @@ app.use(
 	"/post",
 	express.static(path.join(__dirname, "client", "public", "uploads", "post"))
 );
+
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comments", commentRoutes);
