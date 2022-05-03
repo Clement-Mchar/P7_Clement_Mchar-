@@ -45,11 +45,11 @@ app.get("/jwtid", requireAuth, (req, res) => {
 
 app.use(
 	"/profil",
-	express.static(path.join(__dirname, "client", "public", "uploads", "profil"))
+	express.static(path.join(__dirname, "uploads", "profil"))
 );
 app.use(
 	"/post",
-	express.static(path.join(__dirname, "client", "public", "uploads", "post"))
+	express.static(path.join(__dirname, "uploads", "post"))
 );
 
 app.use("/api/user", userRoutes);

@@ -1,5 +1,5 @@
 const { user, post, like, comment } = require("../models");
-
+const { uploadErrors } = require("../utils/errors.utils");
 module.exports.readPost = async (req, res) => {
 	try {
 		const posts = await post.findAll(

@@ -32,7 +32,7 @@ module.exports = {
 					isEmail: { msg: "Email must be a valid email address" },
 					notNull: { msg: "User must have an email" },
 					notEmpty: { msg: "Email must not be empty" },
-					len: [15, 50],
+					len: [5, 50],
 				},
 
 				unique: true,

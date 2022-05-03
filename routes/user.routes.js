@@ -20,9 +20,9 @@ router.get("/logout", authCtrl.logout);
 
 // user displa
 router.get("/", userCtrl.getAllUsers);
-router.get("/", userCtrl.getUser);
 router.get("/:id", userCtrl.getUser);
-router.put("/:id", multer, ErrorHandler, userCtrl.updateUser);
+router.put("/update/picture/:id", multer, ErrorHandler, userCtrl.updatePicture);
+router.put("/update/bio/:id", userCtrl.updateBio)
 router.delete("/:id", userCtrl.deleteUser);
 
 module.exports = router;
