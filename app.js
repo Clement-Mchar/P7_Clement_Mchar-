@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); 
 
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -12,7 +12,7 @@ const { checkUser, requireAuth } = require("./middlewares/auth");
 const { sequelize } = require("./models");
 
 async function main() {
-	await sequelize.sync({ alter: true });
+	await sequelize.sync({alter: true });
 }
 main();
 

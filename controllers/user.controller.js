@@ -75,15 +75,19 @@ module.exports.updateBio = async ( req, res ) => {
 module.exports.deleteUser = async ( req, res ) => {
 	const id = req.params.id;
 	try {
+		const posts = await post.findOne( { where: { userId: id } } );
+		await posts.destroy();
 		const users = await user.findOne( {
 			where: { id },
 		} );
+
 		await users.destroy();
+
 		return res.json( { message: "user deleted !" } );
-		
+
 	} catch ( err ) {
 		console.log( err );
 		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
-	
+
 };

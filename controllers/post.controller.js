@@ -1,123 +1,158 @@
-const { user, post, like, comment } = require("../models");
-const { uploadErrors } = require("../utils/errors.utils");
-module.exports.readPost = async (req, res) => {
+const { user, post, like, comment } = require( "../models" );
+const { uploadErrors } = require( "../utils/errors.utils" );
+const jwt = require( 'jsonwebtoken' );
+
+
+
+
+
+module.exports.readPost = async ( req, res ) => {
 	try {
 		const posts = await post.findAll(
 			{
 				include: [
-					{ model: user, attributes: ["firstName", "lastName", "profilPicture"] },
-					{ model: like, attributes: ["postId"]},
-					{ model: comment, attributes: ["firstName", "lastName", "message"] }
+					{ model: user, attributes: [ "firstName", "lastName", "profilPicture" ] },
+					{ model: like, attributes: [ "userId", "postId" ] },
+					{ model: comment, attributes: [ "firstName", "lastName", "message" ] }
 				],
 			},
 		);
-		return res.json(posts);
-	} catch (err) {
-		console.log(err);
-		return res.status(500).json(err);
+		posts.sort( ( a, b ) => new Date( b.createdAt ) - new Date( a.createdAt ) );
+		return res.json( posts );
+	} catch ( err ) {
+		console.log( err );
+		return res.status( 500 ).json( err );
 	}
 };
 
-module.exports.createPost = async (req, res) => {
+module.exports.createPost = async ( req, res ) => {
 	const { message, video } = req.body;
+	const token = req.cookies.jwt;
+	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
+	const id = decodedToken.id;
+	req.auth = { id };
 	try {
-		const userPost = await user.findOne({ where: { id: req.auth.userId } });
-
-		const posts = await post.create({
+		const userPost = await user.findOne( { where: { id: req.auth.id } } );
+		console.log( req.auth.id );
+if (req.file){
+		 await post.create( {
 			firstName: userPost.firstName,
 			lastName: userPost.lastName,
 			message,
 			userId: userPost.id,
-			picture: `${req.protocol}://${req.get("host")}/post/${
-				req.file.filename
-			}`,
+			picture: `${ req.protocol }://${ req.get( "host" ) }/post/${ req.file.filename
+				}`,
 			video,
-		});
-		return res.json(posts);
-	} catch (err) {
-		console.error();
-		return res.status(500).json(err);
+		} );}else{
+			 await post.create( {
+				firstName: userPost.firstName,
+				lastName: userPost.lastName,
+				message,
+				userId: userPost.id,
+				picture:"",
+				video,
+			} )
+
+		}
+		return res.json( );
+	} catch ( err ) {
+		console.error( err );
+		res.status( 500 ).json( err );
 	}
 };
 
-module.exports.updatePost = async (req, res) => {
+module.exports.updatePost = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-		const posts = await post.findOne({
+		const posts = await post.findOne( {
 			where: { id },
-		});
+		} );
 
 		posts.body = req.body.body;
 		posts.picture = req.body.picture;
 		posts.video = req.body.video;
 		await posts.save();
-		return res.json({ posts });
-	} catch (err) {
-		console.log(err);
-		return res.status(500).json({ error: "Something went wrong" });
+		return res.json( { posts } );
+	} catch ( err ) {
+		console.log( err );
+		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
 };
 
-module.exports.deletePost = async (req, res) => {
+module.exports.deletePost = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-		const posts = await post.findOne({
+		const posts = await post.findOne( {
 			where: { id },
-		});
+		} );
 
 		await posts.destroy();
-		return res.json({ message: "Post deleted !" });
-	} catch (err) {
-		console.log(err);
-		return res.status(500).json({ error: "Something went wrong" });
+		return res.json( { message: "Post deleted !" } );
+	} catch ( err ) {
+		console.log( err );
+		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
 };
 
-module.exports.likePost = async (req, res, next) => {
+module.exports.likePost = async ( req, res ) => {
 	const id = req.params.id;
+	const token = req.cookies.jwt;
+	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
+	const userId = decodedToken.id;
+	req.auth = { userId };
+	console.log( req.auth.userId );
 	try {
-		const likedPost = await post.findOne({
+		const likedPost = await post.findOne( {
 			where: { id },
-			include: [{ model: like, attributes: ["postId", "userId"] }],
-		});
-
-		const alreadyLiked = await like.findOne({
-			where: { userId: req.auth.userId },
-		});
-		if (!alreadyLiked) {
-			await like.create({
+			include: [ { model: like, attributes: [ "postId", "userId" ] } ],
+		} );
+		console.log( req.auth.userId );
+		console.log( likedPost.id );
+		const alreadyLiked = await like.findOne( {
+			where: { userId: req.auth.userId, postId: id },
+		} );
+		if ( !alreadyLiked ) {
+			like.create( {
 				postId: likedPost.id,
 				userId: req.auth.userId,
-			});
+			} );
+		} else {
+			return res.status( 500 ).json( { error: "Something went wrong" } );
 		}
 
-		await likedPost.save(likedPost);
-		return res.json({ likedPost });
-	} catch (err) {
-		console.error();
-		return res.status(500).json({ error: "Something went wrong" });
+		await likedPost.save();
+		return res.json( likedPost );
+	} catch ( err ) {
+		console.log( err );
+		return res.status( 50 ).json( { error: "Something went wrong" } );
 	}
 };
 
-module.exports.unlikePost = async (req, res) => {
+module.exports.unlikePost = async ( req, res ) => {
 	const id = req.params.id;
+	const token = req.cookies.jwt;
+	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
+	const userId = decodedToken.id;
+	req.auth = { userId };
 	try {
-		const likedPost = await post.findOne({
+		const likedPost = await post.findOne( {
 			where: { id },
-			include: [{ model: like, attributes: ["postId", "userId"] }],
-		});
+		} );
 
-		const stillLiked = await like.findOne({
-			where: { userId: req.auth.userId },
-		});
-		if (stillLiked) {
+		const stillLiked = await like.findOne( {
+			where: { userId: req.auth.userId, postId: id },
+		} );
+		if ( stillLiked ) {
+			console.log(stillLiked)
 			await stillLiked.destroy();
+		} else {
+			return res.status( 500 ).json( { error: "Something went wrong" } );
 		}
 
-		await likedPost.save(likedPost);
-		return res.json({ likedPost });
-	} catch (err) {
-		console.log(err);
-		return res.status(500).json({ error: "Something went wrong" });
+		await likedPost.save();
+		return res.json(likedPost);
+	} catch ( err ) {
+		console.log( err );
+		return res.status( 200 ).json( { error: "Something went wrong" } );
 	}
 };

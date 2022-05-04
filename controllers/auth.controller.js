@@ -14,10 +14,12 @@ const createToken = ( id ) => {
 exports.signUp = ( req, res ) => {
 	user.findOne( { where: { email: req.body.email } } )
 		.then( ( userFind ) => {
-			if (userFind) {
-				res.status(409).send()
+			if ( userFind ) {
+				return res.status( 409 ).send();
+
 			}
 			if ( req.body.password.length > 6 ) {
+				console.log( 'ici' );
 				bcrypt
 					.hash( req.body.password, 10 )
 					.then( ( hash ) => {
@@ -25,28 +27,28 @@ exports.signUp = ( req, res ) => {
 							firstName: req.body.firstName,
 							lastName: req.body.lastName,
 							email: req.body.email,
+							profilPicture: '',
 							password: hash,
 						} );
-						User.save()
-							.then( () => res.status( 201 ).send( { user: user._id } ) )
-							.catch( ( err ) => {
-								const errors = signUpErrors( err );
-								res.status( 200 ).send( { errors } );
-							} );
-					} )
+						return res.status( 201 ).json( User );
+					})
+
 					.catch( ( err ) => {
 						const errors = signUpErrors( err );
-						res.status( 200 ).send( { errors } );
+						console.log( 'et non c le troisième' );
+						return res.status( 409 ).send( { errors } );
 					} );
 			} else {
 				const errors = signUpErrors( err );
-				res.status( 200 ).send( { errors } );;
+				console.log( 'ou le quatrième...' );
+				return res.status( 409 ).send( { errors } );;
 			}
-			
+		} )
+		.catch( ( err ) => {
+			const errors = signUpErrors( err );
+			console.log( 'ptn' );
+			return res.status( 409 ).send( { errors } );
 		} );
-		
-
-
 };
 exports.login = ( req, res ) => {
 	const email = req.body.email;
