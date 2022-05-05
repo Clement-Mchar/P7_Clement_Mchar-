@@ -21,15 +21,19 @@ require("dotenv").config({ path: path.resolve(__dirname, "./config/.env") });
 const app = express();
 app.use(express.json());
 
-const corsOptions = {
-	origin: process.env.CLIENT_URL,
-	credentials: true,
-	allowedHeaders: ["sessionId", "Content-Type"],
-	exposedHeaders: ["sessionId"],
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	preflightContinue: false,
-};
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader(
+	  "Access-Control-Allow-Headers",
+	  "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+	);
+	res.setHeader(
+	  "Access-Control-Allow-Methods",
+	  "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+	);
+	next();
+  });
+//app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get(bodyParser.json);
 
@@ -38,7 +42,7 @@ app.use(cookieParser());
 app.get(`${process.env.CLIENT_URL}`, checkUser);
 
 
-app.get("/jwtid", cors(corsOptions), requireAuth, (req, res) => {
+app.get("/jwtid", requireAuth, (req, res) => {
 	res.status(200).send(res.locals.user)
 });
 
