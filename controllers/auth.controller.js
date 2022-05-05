@@ -67,8 +67,7 @@ exports.login = ( req, res ) => {
 						return res.status(500).json( { errors } );
 					}
 					const token = createToken( user.id );
-					res.body.jwt = token
-
+					res.cookie( "jwt", token, { httpOnly: false, maxAge } );
 					res.status( 200 ).json( { user: user.id } );
 				} )
 				.catch( ( err ) => {
