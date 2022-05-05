@@ -39,7 +39,7 @@ app.get(bodyParser.json);
 
 app.use(cookieParser());
 
-app.get(`${process.env.CLIENT_URL}`, checkUser);
+
 
 
 app.get("/jwtid", requireAuth, (req, res) => {
