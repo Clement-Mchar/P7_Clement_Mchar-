@@ -67,17 +67,17 @@ exports.login = ( req, res ) => {
 						return res.status( 500 ).json( { errors } );
 					}
 					const token = createToken( user.id );
-					res.cookie( "jwt", token, { httpOnly: true, sameSite: 'none', maxAge } );
+					res.cookie( "jwt", token, { httpOnly: true, sameSite: 'none', secure: true, maxAge } );
 					res.status( 200 ).json( { user: user.id } );
 				} )
 				.catch( ( err ) => {
 					const errors = signInErrors( err );
-					return res.status(500).json( { errors } );
+					return res.status( 500 ).json( { errors } );
 				} );
 		} )
 		.catch( ( err ) => {
 			const errors = signInErrors( err );
-			return res.status(500).json( { errors } );
+			return res.status( 500 ).json( { errors } );
 		} );
 };
 
