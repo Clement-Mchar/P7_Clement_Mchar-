@@ -1,6 +1,8 @@
 .env
 node_modules
 /.vscode
-/uploads/post
-/uploads/profil
+/uploads/post/*
+/uploads/profil/*
 !/uploads/post/.gitkeep
+!/uploads/profil/random-User.png
+!/uploads/profil/.gitkeep
