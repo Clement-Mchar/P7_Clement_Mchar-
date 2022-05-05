@@ -10,7 +10,7 @@ const createToken = ( id ) => {
 		expiresIn: maxAge,
 	} );
 };
- 
+
 exports.signUp = ( req, res ) => {
 	user.findOne( { where: { email: req.body.email } } )
 		.then( ( userFind ) => {
@@ -31,7 +31,7 @@ exports.signUp = ( req, res ) => {
 							password: hash,
 						} );
 						return res.status( 201 ).json( User );
-					})
+					} )
 
 					.catch( ( err ) => {
 						const errors = signUpErrors( err );
@@ -57,17 +57,17 @@ exports.login = ( req, res ) => {
 		.then( ( user ) => {
 			if ( !user ) {
 				const errors = signInErrors( err );
-				return res.status(500).json( { errors } );
+				return res.status( 500 ).json( { errors } );
 			}
 			bcrypt
 				.compare( req.body.password, user.password )
 				.then( ( valid ) => {
 					if ( !valid ) {
 						const errors = signInErrors( err );
-						return res.status(500).json( { errors } );
+						return res.status( 500 ).json( { errors } );
 					}
 					const token = createToken( user.id );
-					res.cookie( "jwt", token, { httpOnly: false, maxAge } );
+					res.cookie( "jwt", token, { httpOnly: true, sameSite: 'none', maxAge } );
 					res.status( 200 ).json( { user: user.id } );
 				} )
 				.catch( ( err ) => {
