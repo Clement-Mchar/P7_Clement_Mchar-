@@ -38,7 +38,7 @@ app.use(cookieParser());
 app.get(`${process.env.CLIENT_URL}`, checkUser);
 
 
-app.get("/jwtid", requireAuth, (req, res) => {
+app.get("/jwtid", cors(corsOption), requireAuth, (req, res) => {
 	res.status(200).send(res.locals.user)
 });
 
