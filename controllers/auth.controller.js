@@ -57,14 +57,14 @@ exports.login = ( req, res ) => {
 		.then( ( user ) => {
 			if ( !user ) {
 				const errors = signInErrors( err );
-				return res.status( 200 ).json( { errors } );
+				return res.status(500).json( { errors } );
 			}
 			bcrypt
 				.compare( req.body.password, user.password )
 				.then( ( valid ) => {
 					if ( !valid ) {
 						const errors = signInErrors( err );
-						return res.status( 200 ).json( { errors } );
+						return res.status(500).json( { errors } );
 					}
 					const token = createToken( user.id );
 					res.cookie( "jwt", token, { httpOnly: true, maxAge } );
