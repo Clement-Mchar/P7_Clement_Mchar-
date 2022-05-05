@@ -16,7 +16,7 @@ module.exports.readComment = async (req, res) => {
 		console.log(err);
 		return res.status(500).json(err);
 	}
-};
+}; 
 
 module.exports.createComment = async (req, res) => {
 	const { message } = req.body;
@@ -35,7 +35,7 @@ module.exports.createComment = async (req, res) => {
 				{ model: comment, attributes: ["firstName", "lastName", "message"] }
 			],
 		});
-
+ 
 		await comment.create({
 			firstName: userComment.firstName,
 			lastName: userComment.lastName,
@@ -43,7 +43,7 @@ module.exports.createComment = async (req, res) => {
 			userId: userComment.id,
 			postId: postComment.id
 		});
-		return res.json(postComment);
+		return res.json();
 	} catch (err) {
 		console.log(err);
 		return res.status(500).json(err);
