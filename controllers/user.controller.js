@@ -36,13 +36,14 @@ module.exports.updatePicture = async ( req, res ) => {
 				console.log( "file deleted" );
 			}
 		};
-
+		const defaultPic = "random-User.png";
 		const filename = await users.profilPicture.split( "/profil/" )[ 1 ];
-		fs.unlink(
-			`${ __dirname }/../uploads/profil/${ filename }`,
-			resultHandler
-		);
-
+		if ( filename !== defaultPic ) {
+			fs.unlink(
+				`${ __dirname }/../uploads/profil/${ filename }`,
+				resultHandler
+			);
+		}
 		users.bio = req.body.bio;
 		users.profilPicture = `${ req.protocol }://${ req.get( "host" ) }/profil/${ req.file.filename }`;
 
@@ -75,13 +76,10 @@ module.exports.updateBio = async ( req, res ) => {
 module.exports.deleteUser = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-		const posts = await post.findOne( { where: { userId: id } } );
-		await posts.destroy();
-		const users = await user.findOne( {
-			where: { id },
-		} );
 
-		await users.destroy();
+		await user.destroy( {
+			where: { id }, include:"posts", include:"likes"
+		} );
 
 		return res.json( { message: "user deleted !" } );
 

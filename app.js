@@ -42,7 +42,6 @@ app.get("/jwtid", requireAuth, (req, res) => {
 	res.status(200).send(res.locals.user)
 });
 
-
 app.use(
 	"/profil",
 	express.static(path.join(__dirname, "uploads", "profil"))

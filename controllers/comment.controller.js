@@ -1,4 +1,5 @@
 const { user, comment, post, like } = require("../models");
+const jwt = require('jsonwebtoken')
 
 module.exports.readComment = async (req, res) => {
 	try {
@@ -20,12 +21,16 @@ module.exports.readComment = async (req, res) => {
 module.exports.createComment = async (req, res) => {
 	const { message } = req.body;
 	const id = req.params.id;
+	const token = req.cookies.jwt;
+	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
+	const userId = decodedToken.id;
+	req.auth = { userId };
 	try {
 		const userComment = await user.findOne({ where: { id: req.auth.userId } });
-		const postComment = await await post.findOne({
+		const postComment = await post.findOne({
 			where: { id },
 			include: [
-				{ model: user, attributes: ["firstName", "lastName", "picture"] },
+				{ model: user, attributes: ["firstName", "lastName", "profilPicture"] },
 				{ model: like, attributes : ["postId"]},
 				{ model: comment, attributes: ["firstName", "lastName", "message"] }
 			],
@@ -36,7 +41,7 @@ module.exports.createComment = async (req, res) => {
 			lastName: userComment.lastName,
 			message,
 			userId: userComment.id,
-			postId: postComment.id,
+			postId: postComment.id
 		});
 		return res.json(postComment);
 	} catch (err) {

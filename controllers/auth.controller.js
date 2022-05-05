@@ -10,7 +10,7 @@ const createToken = ( id ) => {
 		expiresIn: maxAge,
 	} );
 };
-
+ 
 exports.signUp = ( req, res ) => {
 	user.findOne( { where: { email: req.body.email } } )
 		.then( ( userFind ) => {
@@ -27,7 +27,7 @@ exports.signUp = ( req, res ) => {
 							firstName: req.body.firstName,
 							lastName: req.body.lastName,
 							email: req.body.email,
-							profilPicture: '',
+							profilPicture: `${ req.protocol }://${ req.get( "host" ) }/profil/random-User.png`,
 							password: hash,
 						} );
 						return res.status( 201 ).json( User );

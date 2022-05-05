@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate({ like, post, comment }) {
-			this.hasMany(like, { foreignKey: "userId" });
-			this.hasMany(post, { foreignKey: "userId" });
-			this.hasMany(comment, { foreignKey: "userId" });
+			this.hasMany(like,  { foreignKey: "userId" }, { onDelete: 'cascade', hooks:true } );
+			this.hasMany(post, { foreignKey: "userId" }, { onDelete: 'cascade', hooks:true });
+			this.hasMany(comment, { foreignKey: "userId" }, { onDelete: 'cascade', hooks:true });
 		}
 		toJSON() {
 			return {

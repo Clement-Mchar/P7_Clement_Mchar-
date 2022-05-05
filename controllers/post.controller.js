@@ -11,7 +11,7 @@ module.exports.readPost = async ( req, res ) => {
 		const posts = await post.findAll(
 			{
 				include: [
-					{ model: user, attributes: [ "firstName", "lastName", "profilPicture" ] },
+					{ model: user, attributes: [ "id", "firstName", "lastName", "profilPicture" ] },
 					{ model: like, attributes: [ "userId", "postId" ] },
 					{ model: comment, attributes: [ "firstName", "lastName", "message" ] }
 				],
@@ -68,7 +68,7 @@ module.exports.updatePost = async ( req, res ) => {
 			where: { id },
 		} );
 
-		posts.body = req.body.body;
+		posts.message = req.body.message;
 		posts.picture = req.body.picture;
 		posts.video = req.body.video;
 		await posts.save();
@@ -86,7 +86,7 @@ module.exports.deletePost = async ( req, res ) => {
 			where: { id },
 		} );
 
-		await posts.destroy();
+		await posts.destroy({include: "likes", include: "comments"});
 		return res.json( { message: "Post deleted !" } );
 	} catch ( err ) {
 		console.log( err );
@@ -100,14 +100,12 @@ module.exports.likePost = async ( req, res ) => {
 	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
 	const userId = decodedToken.id;
 	req.auth = { userId };
-	console.log( req.auth.userId );
+
 	try {
 		const likedPost = await post.findOne( {
 			where: { id },
 			include: [ { model: like, attributes: [ "postId", "userId" ] } ],
 		} );
-		console.log( req.auth.userId );
-		console.log( likedPost.id );
 		const alreadyLiked = await like.findOne( {
 			where: { userId: req.auth.userId, postId: id },
 		} );
@@ -124,7 +122,7 @@ module.exports.likePost = async ( req, res ) => {
 		return res.json( likedPost );
 	} catch ( err ) {
 		console.log( err );
-		return res.status( 50 ).json( { error: "Something went wrong" } );
+		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
 };
 
@@ -144,13 +142,15 @@ module.exports.unlikePost = async ( req, res ) => {
 		} );
 		if ( stillLiked ) {
 			console.log(stillLiked)
-			await stillLiked.destroy();
+			await like.destroy( {
+				where: { userId: req.auth.userId, postId: id },
+			} );
 		} else {
 			return res.status( 500 ).json( { error: "Something went wrong" } );
 		}
 
-		await likedPost.save();
-		return res.json(likedPost);
+		const unliked = await likedPost.save();
+		return res.json(unliked);
 	} catch ( err ) {
 		console.log( err );
 		return res.status( 200 ).json( { error: "Something went wrong" } );
