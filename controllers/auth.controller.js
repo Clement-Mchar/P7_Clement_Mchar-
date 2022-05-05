@@ -72,12 +72,12 @@ exports.login = ( req, res ) => {
 				} )
 				.catch( ( err ) => {
 					const errors = signInErrors( err );
-					return res.status( 200 ).json( { errors } );
+					return res.status(500).json( { errors } );
 				} );
 		} )
 		.catch( ( err ) => {
 			const errors = signInErrors( err );
-			return res.status( 200 ).json( { errors } );
+			return res.status(500).json( { errors } );
 		} );
 };
 
