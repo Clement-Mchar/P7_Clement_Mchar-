@@ -7,7 +7,6 @@ const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.routes");
 const path = require("path");
 
-const cors = require("cors");
 const { checkUser, requireAuth } = require("./middlewares/auth");
 const { sequelize } = require("./models");
 
