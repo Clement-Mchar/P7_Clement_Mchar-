@@ -35,7 +35,7 @@ exports.signUp = ( req, res ) => {
 
 					.catch( ( err ) => {
 						const errors = signUpErrors( err );
-						return res.status( 409 ).send(  );
+						return res.status( 200 ).send(  );
 					} );
 			} else {
 				const errors = signUpErrors( err );
@@ -44,7 +44,7 @@ exports.signUp = ( req, res ) => {
 		} )
 		.catch( ( err ) => {
 			const errors = signUpErrors( err );
-			return res.status( 409 ).send(  );
+			return res.status( ).send(  );
 		} );
 };
 exports.login = ( req, res ) => {
@@ -54,7 +54,7 @@ exports.login = ( req, res ) => {
 		.then( ( user ) => {
 			if ( !user ) {
 				
-				res.status(200).json();
+				res.status(200).send();
 			}
 			bcrypt
 				.compare( req.body.password, user.password )
@@ -69,11 +69,11 @@ exports.login = ( req, res ) => {
 				} )
 				.catch( ( err ) => {
 					
-					res.status(200).json();
+					res.status(200).send();
 				} );
 		} )
 		.catch( ( err ) => {
-			res.status(200).json();
+			res.status(200).send();
 		} );
 };
 
