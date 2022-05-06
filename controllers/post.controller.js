@@ -33,7 +33,6 @@ module.exports.createPost = async ( req, res ) => {
 	req.auth = { id };
 	try {
 		const userPost = await user.findOne( { where: { id: req.auth.id } } );
-		console.log( req.auth.id );
 		if ( req.file ) {
 			await post.create( {
 				firstName: userPost.firstName,
@@ -58,7 +57,7 @@ module.exports.createPost = async ( req, res ) => {
 		return res.json();
 	} catch ( err ) {
 		console.error( err );
-		res.status( 500 ).json( err );
+		return res.status( 500 ).json( err );
 	}
 };
 
@@ -85,7 +84,7 @@ module.exports.deletePost = async ( req, res ) => {
 	try {
 		const Post = await post.findOne( { where: { id } } );
 		await comment.destroy( { where: { postId: Post.id } } );
-		await like.destroy({ where: { postId: Post.id } })
+		await like.destroy( { where: { postId: Post.id } } );
 		await post.destroy( { where: { id }, include: "likes", include: "comments" } );
 		return res.json( { message: "Post deleted !" } );
 	} catch ( err ) {
@@ -129,11 +128,11 @@ module.exports.likePost = async ( req, res ) => {
 module.exports.unlikePost = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-		await post.findOne({where: {id }})
-		await like.destroy( {where: {postId: post.id }});
+		await post.findOne( { where: { id } } );
+		await like.destroy( { where: { postId: post.id } } );
 		return res.json( { message: "Comment deleted !" } );
 	} catch ( err ) {
 		console.log( err );
-		return res.status( 200 ).json( { error: "Something went wrong" } );
+		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
 };

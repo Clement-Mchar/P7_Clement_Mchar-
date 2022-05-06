@@ -6,17 +6,17 @@ module.exports.readComment = async ( req, res ) => {
 		const comments = await comment.findAll( {
 			where: { postId: req.params.id },
 			include: [
-				{ model: user, attributes: [ "firstName", "lastName", "picture" ] },
+				{ model: user, attributes: [ "firstName", "lastName", "profilPicture" ] },
 				{ model: like, attributes: [ "postId" ] },
 				{ model: comment, attributes: [ "firstName", "lastName", "message" ] }
 			]
 		} );
-		return res.json( comments );
+		return res.json({comments});
 	} catch ( err ) {
 		console.log( err );
-		return res.status( 500 ).json( err );
+		return res.status(500).json( err );
 	}
-};
+}; 
 
 module.exports.createComment = async ( req, res ) => {
 	const { message } = req.body;
@@ -32,21 +32,23 @@ module.exports.createComment = async ( req, res ) => {
 			include: [
 				{ model: user, attributes: [ "firstName", "lastName", "profilPicture" ] },
 				{ model: like, attributes: [ "postId" ] },
-				{ model: comment, attributes: [ "firstName", "lastName", "message" ] }
+				{ model: comment, attributes: [ "firstName", "lastName", "message"] }
 			],
 		} );
 
 		await comment.create( {
 			firstName: userComment.firstName,
 			lastName: userComment.lastName,
+			
 			message,
 			userId: userComment.id,
-			postId: postComment.id
-		} );
+			postId: postComment.id,
+
+		}, );
 		return res.json();
 	} catch ( err ) {
 		console.log( err );
-		return res.status( 500 ).json( err );
+		return res.status(500).json( err );
 	}
 };
 
@@ -59,7 +61,7 @@ module.exports.deleteComment = async ( req, res ) => {
 		
 	} catch ( err ) {
 		console.error();
-		return res.status( 500 ).json( { error: "Something went wrong" } );
+		return res.status(500).json( { error: "Something went wrong" } );
 	}
 };
 
@@ -89,6 +91,6 @@ module.exports.updateComment = async ( req, res ) => {
 		return res.json( { message: "You can't do that" } );
 	} catch ( err ) {
 		console.log( err );
-		return res.status( 500 ).json( { error: "Something went wrong" } );
+		return res.status(500).json( { error: "Something went wrong" } );
 	}
 }; 
