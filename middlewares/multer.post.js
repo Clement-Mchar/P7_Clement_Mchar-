@@ -32,4 +32,4 @@ const storage = multer.diskStorage({
 // on ajoute un timestamp au nom du fichier
 module.exports = multer({ storage: storage }).single("picture");
 
-// on exporte le multer
+// on exporte le multer 

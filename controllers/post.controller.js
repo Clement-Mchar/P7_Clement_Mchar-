@@ -34,27 +34,28 @@ module.exports.createPost = async ( req, res ) => {
 	try {
 		const userPost = await user.findOne( { where: { id: req.auth.id } } );
 		console.log( req.auth.id );
-if (req.file){
-		 await post.create( {
-			firstName: userPost.firstName,
-			lastName: userPost.lastName,
-			message,
-			userId: userPost.id,
-			picture: `${ req.protocol }://${ req.get( "host" ) }/post/${ req.file.filename
-				}`,
-			video,
-		} );}else{
-			 await post.create( {
+		if ( req.file ) {
+			await post.create( {
 				firstName: userPost.firstName,
 				lastName: userPost.lastName,
 				message,
 				userId: userPost.id,
-				picture:"",
+				picture: `${ req.protocol }://${ req.get( "host" ) }/post/${ req.file.filename
+					}`,
 				video,
-			} )
+			} );
+		} else {
+			await post.create( {
+				firstName: userPost.firstName,
+				lastName: userPost.lastName,
+				message,
+				userId: userPost.id,
+				picture: "",
+				video,
+			} );
 
 		}
-		return res.json( );
+		return res.json();
 	} catch ( err ) {
 		console.error( err );
 		res.status( 500 ).json( err );
@@ -82,11 +83,10 @@ module.exports.updatePost = async ( req, res ) => {
 module.exports.deletePost = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-		const posts = await post.findOne( {
-			where: { id },
-		} );
-
-		await posts.destroy({include: "likes", include: "comments"});
+		const Post = await post.findOne( { where: { id } } );
+		await comment.destroy( { where: { postId: Post.id } } );
+		await like.destroy({ where: { postId: Post.id } })
+		await post.destroy( { where: { id }, include: "likes", include: "comments" } );
 		return res.json( { message: "Post deleted !" } );
 	} catch ( err ) {
 		console.log( err );
@@ -128,29 +128,10 @@ module.exports.likePost = async ( req, res ) => {
 
 module.exports.unlikePost = async ( req, res ) => {
 	const id = req.params.id;
-	const token = req.cookies.jwt;
-	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
-	const userId = decodedToken.id;
-	req.auth = { userId };
 	try {
-		const likedPost = await post.findOne( {
-			where: { id },
-		} );
-
-		const stillLiked = await like.findOne( {
-			where: { userId: req.auth.userId, postId: id },
-		} );
-		if ( stillLiked ) {
-			console.log(stillLiked)
-			await like.destroy( {
-				where: { userId: req.auth.userId, postId: id },
-			} );
-		} else {
-			return res.status( 500 ).json( { error: "Something went wrong" } );
-		}
-
-		const unliked = await likedPost.save();
-		return res.json(unliked);
+		await post.findOne({where: {id }})
+		await like.destroy( {where: {postId: post.id }});
+		return res.json( { message: "Comment deleted !" } );
 	} catch ( err ) {
 		console.log( err );
 		return res.status( 200 ).json( { error: "Something went wrong" } );

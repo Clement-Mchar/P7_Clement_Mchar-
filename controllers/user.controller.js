@@ -1,4 +1,4 @@
-const { user, post } = require( "../models" );
+const { user, post, like, comment } = require( "../models" );
 const fs = require( "fs" );
 const jwt = require( "jsonwebtoken" );
 module.exports.getAllUsers = async ( req, res ) => {
@@ -76,9 +76,13 @@ module.exports.updateBio = async ( req, res ) => {
 module.exports.deleteUser = async ( req, res ) => {
 	const id = req.params.id;
 	try {
-
+		const User = await user.findOne( { where: { id } } );
+		const Post = await post.findOne( { where: { userId: User.id } } );
+		await comment.destroy( { where: { postId: Post.id } } );
+		await like.destroy( { where: { postId: Post.id } } );
+		await post.destroy( { where: { userId: User.id }, include: "likes", include: "comments" } );
 		await user.destroy( {
-			where: { id }, include:"posts", include:"likes"
+			where: { id }, include: "posts", include: "likes", include: "comments"
 		} );
 
 		return res.json( { message: "user deleted !" } );
