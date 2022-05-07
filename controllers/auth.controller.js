@@ -12,11 +12,11 @@ const createToken = ( id ) => {
 };
 
 exports.signUp = ( req, res ) => {
-	
+
 	user.findOne( { where: { email: req.body.email } } )
 		.then( ( userFind ) => {
 			if ( userFind ) {
-				return res.status( 200 ).send();
+				return res.status( 500 ).send( { errors } );
 			}
 			if ( req.body.password.length > 6 ) {
 				bcrypt
@@ -35,16 +35,16 @@ exports.signUp = ( req, res ) => {
 
 					.catch( ( err ) => {
 						const errors = signUpErrors( err );
-						return res.status( 200 ).send(  );
+						return res.status( 500 ).send( { errors } );
 					} );
 			} else {
 				const errors = signUpErrors( err );
-				return res.status( 500 ).send(  );;
+				return res.status( 500 ).send( { errors } );;
 			}
 		} )
 		.catch( ( err ) => {
 			const errors = signUpErrors( err );
-			return res.status( ).send(  );
+			return res.status( 500 ).send( { errors } );
 		} );
 };
 exports.login = ( req, res ) => {
@@ -53,27 +53,28 @@ exports.login = ( req, res ) => {
 		.findOne( { where: { email } } )
 		.then( ( user ) => {
 			if ( !user ) {
-				
-				res.status(200).send();
+				const errors = signInErrors( err );
+				res.status( 500 ).send( { errors } );
 			}
 			bcrypt
 				.compare( req.body.password, user.password )
 				.then( ( valid ) => {
 					if ( !valid ) {
-						
-						return res.status(403).json(  );
+						const errors = signInErrors( err );
+						return res.status( 403 ).json( { errors } );
 					}
 					const token = createToken( user.id );
-					res.cookie( "jwt", token, { httpOnly: true, sameSite: 'none', secure: true,   maxAge } );
+					res.cookie( "jwt", token, { httpOnly: true, sameSite: 'none', secure: true, maxAge } );
 					res.status( 200 ).json();
 				} )
 				.catch( ( err ) => {
-					
-					res.status(200).send();
+					const errors = signInErrors( err );
+					res.status( 500 ).send( { errors } );
 				} );
 		} )
 		.catch( ( err ) => {
-			res.status(200).send();
+			const errors = signInErrors( err );
+			res.status( 500 ).send( { errors } );
 		} );
 };
 

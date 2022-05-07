@@ -7,13 +7,15 @@ const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.routes");
 const path = require("path");
 
-const { checkUser, requireAuth } = require("./middlewares/auth");
+const { requireAuth } = require("./middlewares/auth");
 const { sequelize } = require("./models");
 
 async function main() {
 	await sequelize.sync({alter: true }); 
 }
 main();
+
+//on synchronise la base de données et le back
 
 require("dotenv").config({ path: path.resolve(__dirname, "./config/.env") });
 
@@ -33,18 +35,18 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	next();
   });
-//app.use(cors(corsOptions));
+// On paramètre les headers nécessaires, dont celui des credentials, important pour le cookie
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get(bodyParser.json);
 
 app.use(cookieParser());
 
-
-
-
 app.get("/jwtid", requireAuth, (req, res) => {
 	return res.status(200).send(res.locals.user)
 });
+
+//la route qui vérifie le token
 
 app.use(
 	"/profil",
@@ -55,8 +57,12 @@ app.use(
 	express.static(path.join(__dirname, "uploads", "post"))
 );
 
+//les routes d'upload des images
+
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comments", commentRoutes);
+
+//les routes des controlleurs
 
 module.exports = app;

@@ -13,7 +13,14 @@ module.exports.readPost = async ( req, res ) => {
 				include: [
 					{ model: user, attributes: [ "id", "firstName", "lastName", "profilPicture" ] },
 					{ model: like, attributes: [ "userId", "postId" ] },
-					{ model: comment, attributes: [ "firstName", "lastName", "message" ] }
+					{
+						model: comment, attributes: [ "firstName", "lastName", "message", "id" ], include: [
+							{
+								model: user,
+								attributes: [ "firstName", "lastName", "profilPicture" ],
+							},
+						],
+					}
 				],
 			},
 		);
@@ -127,12 +134,24 @@ module.exports.likePost = async ( req, res ) => {
 
 module.exports.unlikePost = async ( req, res ) => {
 	const id = req.params.id;
+	const token = req.cookies.jwt;
+	const decodedToken = jwt.verify( token, process.env.TOKEN_SECRET );
+	const userId = decodedToken.id;
+	req.auth = { userId };
 	try {
-		await post.findOne( { where: { id } } );
-		await like.destroy( { where: { postId: post.id } } );
+		const likedPost = await post.findOne( { where: { id } } );
+		const stillLiked = await like.findOne( {
+			where: { userId: req.auth.userId, postId: likedPost.id },
+		} );
+		if ( stillLiked ) {
+			await like.destroy( { where: { postId: likedPost.id } } );
+		} else {
+
+			return res.status( 500 ).json( { error: "Something went wrong" } );
+		}
 		return res.json( { message: "Comment deleted !" } );
 	} catch ( err ) {
 		console.log( err );
 		return res.status( 500 ).json( { error: "Something went wrong" } );
 	}
-};
+}; 
